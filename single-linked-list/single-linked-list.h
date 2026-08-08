@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <string>
 #include <utility>
+#include <algorithm>
+#include <initializer_list>
 
 template <typename Type>
 class SingleLinkedList {
@@ -230,8 +232,8 @@ public:
     }
     SingleLinkedList() = default;
     SingleLinkedList(std::initializer_list<Type> values) {
-        for (auto it = values.end() - 1; it >= values.begin(); --it) {
-            PushFront(*it);
+        for (auto it = values.end(); it != values.begin();) {
+            PushFront(*(--it));
         }
     }
     void swap(SingleLinkedList& other) noexcept {
@@ -241,14 +243,11 @@ public:
 
     SingleLinkedList(const SingleLinkedList& other) {
         SingleLinkedList tmp;
+        auto pos = tmp.before_begin();
         for (auto it = other.cbegin(); it != other.cend(); ++it) {
-            tmp.PushFront(*it);
+            pos = tmp.InsertAfter(pos, *it);
         }
-        SingleLinkedList result;
-        for (auto it = tmp.cbegin(); it != tmp.cend(); ++it) {
-            result.PushFront(*it);
-        }
-        swap(result);
+        swap(tmp);
     }
 
     SingleLinkedList& operator=(const SingleLinkedList& rhs) {
